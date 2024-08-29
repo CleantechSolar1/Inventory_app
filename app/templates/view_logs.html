@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Logs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/custom.css') }}">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Log Entries</h1>
+
+        <!-- Export to CSV Button -->
+        <div class="mb-3">
+            <a href="{{ url_for('main.export_logs_csv') }}" class="btn btn-primary">Export Logs to CSV</a>
+            <a href="{{ url_for('main.home') }}" class="btn btn-secondary">Back to Home</a>
+        </div>
+
+        <!-- Log Table -->
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Action</th>
+                        <th>Item ID</th>
+                        <th>Changes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log.timestamp }}</td>
+                        <td>{{ log.user_id }}</td>
+                        <td>{{ log.user.username if log.user else 'Unknown' }}</td>
+                        <td>{{ log.action }}</td>
+                        <td>{{ log.item_id }}</td>
+                        <td>{{ log.changes }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Back to Home Button -->
+        <div class="mt-4">
+            <a href="{{ url_for('main.home') }}" class="btn btn-secondary">Back to Home</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

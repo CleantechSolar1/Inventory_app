@@ -1,0 +1,240 @@
+/* Custom styles for the inventory management system */
+
+/* General Body Styles */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+    margin: 0; /* Ensure no default margin is applied */
+    padding: 0; /* Ensure no default padding is applied */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Center content vertically */
+}
+
+/* Container Styles */
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto; /* Center the container horizontally */
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Form Control Styles */
+.form-control {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border: none;
+    color: #212529;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+}
+
+/* Alert Styles */
+.alert {
+    margin-top: 20px;
+}
+
+/* Login Form Specific Styles */
+.login-form .form-control {
+    max-width: 300px; /* Set max width for input fields to reduce size */
+    height: 38px; /* Adjust height as needed */
+    font-size: 0.875rem; /* Adjust font size as needed */
+    margin: 0 auto; /* Center the input fields */
+}
+
+.login-form .form-group {
+    margin-bottom: 1rem; /* Adjust spacing between form groups */
+}
+
+.login-form .btn {
+    font-size: 0.875rem; /* Adjust button font size */
+    padding: 0.5rem 1rem; /* Adjust button padding */
+}
+
+/* Form Specific Styles for Editing Items */
+.edit-item-form .form-group {
+    margin-bottom: 15px;
+}
+
+.edit-item-form .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.edit-item-form .form-group input[type="text"],
+.edit-item-form .form-group input[type="date"],
+.edit-item-form .form-group textarea,
+.edit-item-form .form-group select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.edit-item-form .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.edit-item-form .form-group input[type="submit"] {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.edit-item-form .form-group input[type="submit"]:hover {
+    background-color: #218838;
+}
+
+.edit-item-form .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.edit-item-form .back-link:hover {
+    text-decoration: underline;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 250px;
+    background-color: #f8f9fa;
+    padding: 15px;
+    position: fixed; /* Make it fixed to the left side */
+    top: 0;
+    bottom: 0;
+    left: 0;
+    border-right: 1px solid #ddd;
+}
+
+.sidebar h2 {
+    font-size: 1.25rem;
+    margin-bottom: 15px;
+}
+
+.sidebar .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* Adjust main content container to fit alongside the sidebar */
+.container {
+    margin-left: 270px; /* Adjust margin to fit the sidebar */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: calc(100% - 270px); /* Ensure it doesn’t exceed the viewport width */
+}
+
+/* Ensure the container’s margin is responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: static;
+        border-right: none;
+    }
+    
+    .container {
+        margin-left: 0;
+        max-width: 100%;
+    }
+}
+
+/* Background Image for Login Page */
+body.login-page {
+    background-image: url("{{ url_for('static', filename='Team_IT.jpeg') }}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Apply a semi-transparent background to the login form */
+.login-form {
+    background-color: rgba(255, 255, 255, 0.8); /* White background with transparency */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}

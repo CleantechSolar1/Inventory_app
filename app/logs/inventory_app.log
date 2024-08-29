@@ -1,0 +1,125 @@
+2024-08-19 16:28:15,116 - app - WARNING - Form validation failed: {}
+2024-08-20 10:25:57,737 - app - WARNING - Form validation failed: {}
+2024-08-20 13:04:40,389 - app - WARNING - Form validation failed: {}
+2024-08-20 14:03:20,988 - app - WARNING - Form validation failed: {}
+2024-08-20 15:15:38,867 - app - WARNING - Form validation failed: {}
+2024-08-20 15:20:04,730 - app - WARNING - Form validation failed: {}
+2024-08-21 10:06:09,672 - app - WARNING - Form validation failed: {}
+2024-08-21 11:08:30,328 - app - WARNING - Form validation failed: {}
+2024-08-21 12:26:52,844 - app - WARNING - Form validation failed: {}
+2024-08-21 23:11:34,832 - app - WARNING - Form validation failed: {}
+2024-08-22 10:50:26,728 - app - WARNING - Form validation failed: {}
+2024-08-22 11:27:49,845 - app - WARNING - Form validation failed: {}
+2024-08-22 14:30:15,093 - app - WARNING - Form validation failed: {}
+2024-08-22 14:43:21,377 - app - WARNING - Form validation failed: {}
+2024-08-22 16:44:11,259 - app - WARNING - Form validation failed: {}
+2024-08-23 11:59:46,427 - app - WARNING - Form validation failed: {}
+2024-08-23 12:08:04,709 - app - WARNING - Form validation failed: {}
+2024-08-23 12:24:27,169 - app - WARNING - Form validation failed: {}
+2024-08-23 12:29:49,621 - app - WARNING - Form validation failed: {}
+2024-08-23 12:43:18,507 - app - WARNING - Form validation failed: {}
+2024-08-23 12:49:40,526 - app - WARNING - Form validation failed: {}
+2024-08-23 12:50:45,877 - app - WARNING - Form validation failed: {}
+2024-08-23 12:51:42,555 - app - WARNING - Form validation failed: {}
+2024-08-23 12:54:49,495 - app - WARNING - Form validation failed: {}
+2024-08-23 15:59:36,437 - app - WARNING - Form validation failed: {}
+2024-08-23 16:25:38,143 - app - WARNING - Form validation failed: {}
+2024-08-26 11:32:07,778 - app - WARNING - Form validation failed: {}
+2024-08-26 11:32:27,660 - app - WARNING - Form validation failed: {}
+2024-08-26 12:02:52,767 - app - WARNING - Form validation failed: {}
+2024-08-26 12:02:58,433 - app - WARNING - Form validation failed: {}
+2024-08-26 12:04:04,263 - app - WARNING - Form validation failed: {}
+2024-08-26 15:26:10,501 - app - WARNING - Form validation failed: {}
+2024-08-26 15:44:55,839 - app - WARNING - Form validation failed: {}
+2024-08-26 16:31:46,346 - app - WARNING - Form validation failed: {}
+2024-08-27 10:02:43,376 - app - WARNING - Form validation failed: {}
+2024-08-27 10:03:13,209 - app - WARNING - Form validation failed: {}
+2024-08-27 10:10:54,535 - app - WARNING - Form validation failed: {}
+2024-08-27 10:27:21,805 - app - WARNING - Form validation failed: {}
+2024-08-27 10:30:22,518 - app - WARNING - Form validation failed: {}
+2024-08-27 10:30:37,766 - app - WARNING - Form validation failed: {}
+2024-08-27 10:35:30,315 - app - WARNING - Form validation failed: {}
+2024-08-27 10:38:19,897 - app - WARNING - Form validation failed: {}
+2024-08-27 11:17:00,023 - app - WARNING - Form validation failed: {}
+2024-08-27 11:22:52,431 - app - WARNING - Form validation failed: {}
+2024-08-27 12:59:25,328 - app - WARNING - Form validation failed: {}
+2024-08-27 14:26:43,126 - app - WARNING - Form validation failed: {}
+2024-08-27 15:35:56,035 - app - WARNING - Form validation failed: {}
+2024-08-27 15:36:18,949 - app - WARNING - Form validation failed: {}
+2024-08-27 15:37:09,119 - app - WARNING - Form validation failed: {}
+2024-08-27 17:25:10,073 - app - WARNING - Form validation failed: {}
+2024-08-28 10:00:51,390 - app - WARNING - Form validation failed: {}
+2024-08-28 10:01:25,187 - app - WARNING - Form validation failed: {}
+2024-08-28 10:01:41,768 - app - WARNING - Form validation failed: {}
+2024-08-28 10:01:57,150 - app - WARNING - Form validation failed: {}
+2024-08-28 10:04:59,843 - app - WARNING - Form validation failed: {}
+2024-08-28 10:47:19,175 - app - WARNING - Form validation failed: {}
+2024-08-28 11:12:05,981 - app - WARNING - Form validation failed: {}
+2024-08-28 11:16:41,898 - app - WARNING - Form validation failed: {}
+2024-08-28 11:18:26,469 - app - WARNING - Form validation failed: {}
+2024-08-28 11:19:02,282 - app - WARNING - Form validation failed: {}
+2024-08-28 11:19:11,763 - app - WARNING - Form validation failed: {}
+2024-08-28 11:26:37,094 - app - WARNING - Form validation failed: {}
+2024-08-28 11:27:16,092 - app - WARNING - Form validation failed: {}
+2024-08-28 11:38:10,561 - app - WARNING - Form validation failed: {}
+2024-08-28 11:39:01,121 - app - WARNING - Form validation failed: {}
+2024-08-28 11:39:49,650 - app - WARNING - Form validation failed: {}
+2024-08-28 11:41:48,885 - app - WARNING - Form validation failed: {}
+2024-08-28 12:06:14,349 - app - WARNING - Form validation failed: {}
+2024-08-28 12:07:02,594 - app - WARNING - Form validation failed: {}
+2024-08-28 12:11:55,960 - app - WARNING - Form validation failed: {}
+2024-08-28 12:12:53,319 - app - WARNING - Form validation failed: {}
+2024-08-28 12:16:41,142 - app - WARNING - Form validation failed: {}
+2024-08-28 13:19:57,254 - app - WARNING - Form validation failed: {}
+2024-08-28 16:37:46,787 - app - WARNING - Form validation failed: {}
+2024-08-28 16:38:08,403 - app - ERROR - Error deleting item: (pyodbc.Error) ('HY000', "[HY000] [Microsoft][ODBC Microsoft Access Driver] The record cannot be deleted or changed because table 'log' includes related records. (-1612) (SQLExecDirectW)")
+[SQL: DELETE FROM inventory WHERE inventory.id = ?]
+[parameters: (44,)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2024-08-28 16:38:42,725 - app - ERROR - Error deleting item: (pyodbc.Error) ('HY000', "[HY000] [Microsoft][ODBC Microsoft Access Driver] The record cannot be deleted or changed because table 'log' includes related records. (-1612) (SQLExecDirectW)")
+[SQL: DELETE FROM inventory WHERE inventory.id = ?]
+[parameters: (44,)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2024-08-28 16:39:54,726 - app - ERROR - Error deleting item: (pyodbc.Error) ('HY000', "[HY000] [Microsoft][ODBC Microsoft Access Driver] The record cannot be deleted or changed because table 'log' includes related records. (-1612) (SQLExecDirectW)")
+[SQL: DELETE FROM inventory WHERE inventory.id = ?]
+[parameters: (44,)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2024-08-28 16:41:28,874 - app - ERROR - Error deleting item: (pyodbc.Error) ('HY000', "[HY000] [Microsoft][ODBC Microsoft Access Driver] The record cannot be deleted or changed because table 'log' includes related records. (-1612) (SQLExecDirectW)")
+[SQL: DELETE FROM inventory WHERE inventory.id = ?]
+[parameters: (44,)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2024-08-28 16:42:38,843 - app - WARNING - Form validation failed: {}
+2024-08-28 16:43:21,807 - app - WARNING - Form validation failed: {}
+2024-08-28 16:43:41,429 - app - WARNING - Form validation failed: {}
+2024-08-28 16:44:56,635 - app - WARNING - Form validation failed: {}
+2024-08-28 16:50:31,484 - app - WARNING - Form validation failed: {}
+2024-08-28 16:51:37,632 - app - WARNING - Form validation failed: {}
+2024-08-28 16:54:52,130 - app - WARNING - Form validation failed: {}
+2024-08-28 17:12:17,905 - app - WARNING - Form validation failed: {}
+2024-08-29 10:20:18,482 - app - WARNING - Form validation failed: {}
+2024-08-29 10:37:14,682 - app - WARNING - Form validation failed: {}
+2024-08-29 10:40:45,589 - app - WARNING - Form validation failed: {}
+2024-08-29 10:53:26,838 - app - WARNING - Form validation failed: {}
+2024-08-29 10:56:44,699 - app - WARNING - Form validation failed: {}
+2024-08-29 11:58:05,335 - app - WARNING - Form validation failed: {}
+2024-08-29 12:22:52,532 - app - WARNING - Form validation failed: {}
+2024-08-29 12:23:47,212 - app - WARNING - Form validation failed: {}
+2024-08-29 12:24:28,841 - app - ERROR - Error importing CSV file: time data '02-03-2021' does not match format '%Y-%m-%d'
+2024-08-29 12:24:40,586 - app - ERROR - Error importing CSV file: time data '02-03-2021' does not match format '%Y-%m-%d'
+2024-08-29 12:24:45,834 - app - ERROR - Error importing CSV file: time data '02-03-2021' does not match format '%Y-%m-%d'
+2024-08-29 12:25:24,040 - app - ERROR - Error importing CSV file: time data '02-03-2021' does not match format '%Y-%m-%d'
+2024-08-29 12:25:36,586 - app - ERROR - Error importing CSV file: time data '02-03-2021' does not match format '%Y-%m-%d'
+2024-08-29 12:26:27,638 - app - WARNING - Form validation failed: {}
+2024-08-29 12:26:34,746 - app - ERROR - Error importing CSV file: time data '02-03-2021' does not match format '%Y-%m-%d'
+2024-08-29 12:26:44,655 - app - ERROR - Error importing CSV file: time data '02-03-2021' does not match format '%Y-%m-%d'
+2024-08-29 12:27:06,615 - app - ERROR - Error importing CSV file: time data '02-03-2021' does not match format '%Y-%m-%d'
+2024-08-29 12:28:12,877 - app - ERROR - Error importing CSV file: time data '02-03-2021' does not match format '%Y-%m-%d'
+2024-08-29 13:16:32,830 - app - ERROR - Error importing CSV file: This transaction is closed
+2024-08-29 13:22:46,339 - app - ERROR - Error importing CSV file: This transaction is closed
+2024-08-29 13:24:04,498 - app - ERROR - Error deleting item: (pyodbc.Error) ('HY000', "[HY000] [Microsoft][ODBC Microsoft Access Driver] The record cannot be deleted or changed because table 'log' includes related records. (-1612) (SQLExecDirectW)")
+[SQL: DELETE FROM inventory WHERE inventory.id = ?]
+[parameters: (92,)]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
+2024-08-29 14:01:56,581 - app - ERROR - Error deleting all records: (pyodbc.Error) ('HY000', "[HY000] [Microsoft][ODBC Microsoft Access Driver] The record cannot be deleted or changed because table 'log' includes related records. (-1612) (SQLExecDirectW)")
+[SQL: DELETE FROM inventory]
+(Background on this error at: https://sqlalche.me/e/20/dbapi)
