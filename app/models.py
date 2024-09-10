@@ -5,6 +5,7 @@ from app import db
 from sqlalchemy import ForeignKey
 
 
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -40,6 +41,13 @@ class Inventory(db.Model):
     country = db.Column(db.String(100))
     vendor_location = db.Column(db.String(100))
     updated_by = db.Column(db.String(100), nullable=False)
+    
+    
+    is_deleted = db.Column(db.Boolean, default=False)
+    deleted_at = db.Column(db.DateTime)
+    deleted_by = db.Column(db.String(100))
+
+    
 
     # Updated relationship with cascade and setting item_id to null on delete
     logs = db.relationship('Log', backref='inventory', lazy=True, cascade='all, delete-orphan')

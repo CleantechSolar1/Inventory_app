@@ -13,6 +13,15 @@ from werkzeug.security import generate_password_hash
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
+from datetime import datetime
+from flask import current_app, flash, redirect, render_template, request, url_for
+from flask_login import current_user, login_required
+from flask import flash, redirect, url_for
+from flask_login import current_user, login_required
+from app import db
+from app.models import Inventory, Log
+from datetime import datetime
+
 #from forms import ResetPasswordForm  # Update this import based on your project structure
 #from models import User  # Update this import based on your project structure
 
@@ -158,11 +167,14 @@ def add_item():
         
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f'Error adding item: {e}')
+            current_app.logger.error(f'Error adding item: {str(e)}', exc_info=True)
             flash('An error occurred while adding the item. Please try again.', 'danger')
-    else:
+    elif request.method == 'POST':
         current_app.logger.warning(f'Form validation failed: {form.errors}')
-    
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"Error in {getattr(form, field).label.text}: {error}", 'danger')
+
     return render_template('add_item.html', form=form, asset_types=ASSET_TYPES, statuses=STATUS, brands=BRANDS,
                            operating_systems=OPERATING_SYSTEMS, departments=DEPARTMENTS, offices=OFFICES, countries=COUNTRIES,
                            vendor_locations=VENDOR_LOCATIONS)
@@ -216,17 +228,31 @@ def edit_item(item_id):
 @main.route('/view_logs')
 @login_required
 def view_logs():
-    logs = Log.query.order_by(Log.timestamp.desc()).all()
+    # Get the filter parameter from the URL
+    log_filter = request.args.get('filter', 'all')
+
+    # Base query
+    query = Log.query
+
+    # Apply filter if specified
+    if log_filter == 'csv_import':
+        query = query.filter(Log.action == 'CSV Import')
+
+    # Order logs by timestamp descending
+    logs = query.order_by(Log.timestamp.desc()).all()
+
     current_app.logger.info(f"Fetched {len(logs)} logs")
     for log in logs:
         current_app.logger.debug(f"Log: ID {log.id}, Action {log.action}, Item ID {log.item_id}, Changes {log.changes}")
-    return render_template('view_logs.html', logs=logs)
+
+    return render_template('view_logs.html', logs=logs, current_filter=log_filter)
 
 @main.route('/export_csv')
 @login_required
 def export_csv():
     # Fetch inventory items from the database
-    items = Inventory.query.all()
+    items = Inventory.query.filter_by(is_deleted=False).all()
+
     
     # Create a CSV in memory
     output = io.StringIO()
@@ -303,30 +329,34 @@ def delete_item(item_id):
     item = Inventory.query.get_or_404(item_id)
     
     try:
-        # Create the log entry
-        log = Log(
+        # Prepare item details for logging
+        item_details = f"Asset Tag: {item.asset_tag}, Type: {item.asset_type}, Brand: {item.brand}, Model: {item.model}"
+
+        # Create the log entry for deletion
+        delete_log = Log(
             user_id=current_user.id,
             action="Deleted item",
             item_id=item_id,
-            changes=f"Item deleted: {item.asset_tag}",
+            changes=f"Item marked as deleted: {item_details}",
             timestamp=datetime.utcnow()
         )
-        db.session.add(log)
+        db.session.add(delete_log)
         
-        # Delete the item
-        db.session.delete(item)
+        # Mark the item as deleted
+        item.is_deleted = True
+        item.deleted_at = datetime.utcnow()
+        item.deleted_by = current_user.username
         
-        # Commit both the log entry and the item deletion
+        # Commit the changes
         db.session.commit()
         
-        flash('Item deleted successfully!', 'success')
+        flash('Item marked as deleted successfully!', 'success')
     except Exception as e:
         db.session.rollback()
-        current_app.logger.error(f'Error deleting item: {e}')
-        flash('An error occurred while deleting the item. Please try again.', 'danger')
+        current_app.logger.error(f'Error marking item as deleted: {e}')
+        flash('An error occurred while marking the item as deleted. Please try again.', 'danger')
     
     return redirect(url_for('main.home'))
-
 # User Management Routes
 
 @main.route('/add_user', methods=['GET', 'POST'])
@@ -425,6 +455,19 @@ def import_csv():
             # Skip the header row if your CSV file has one
             next(csv_input, None)
 
+            # Count imported rows
+            imported_count = 0
+
+            # Function to parse dates flexibly
+            def parse_date(date_string):
+                date_formats = ['%Y-%m-%d', '%d-%m-%Y', '%m-%d-%Y']
+                for date_format in date_formats:
+                    try:
+                        return datetime.strptime(date_string, date_format)
+                    except ValueError:
+                        continue
+                raise ValueError(f"Unable to parse date: {date_string}")
+
             # Iterate over the CSV rows
             for row in csv_input:
                 # Assuming your CSV columns are in the same order as your Inventory model
@@ -437,11 +480,11 @@ def import_csv():
                     fa_code=row[5],
                     serial_number=row[6],
                     operating_system=row[7],
-                    purchase_date=datetime.strptime(row[8], '%Y-%m-%d'),
+                    purchase_date=parse_date(row[8]),
                     age=row[9],
                     current_owner=row[10],
                     previous_owner=row[11],
-                    warranty_end_date=datetime.strptime(row[12], '%Y-%m-%d'),
+                    warranty_end_date=parse_date(row[12]),
                     condition_notes=row[13],
                     department=row[14],
                     office=row[15],
@@ -450,15 +493,32 @@ def import_csv():
                     updated_by=current_user.username
                 )
                 db.session.add(new_item)
+                imported_count += 1
 
             db.session.commit()
-            flash('CSV file imported successfully!', 'success')
+
+            # Log the import activity
+            log_entry = Log(
+                action="CSV Import",
+                item_id=None,
+                changes=f"Imported {imported_count} items",
+                user_id=current_user.id
+            )
+            db.session.add(log_entry)
+            db.session.commit()
+
+            flash(f'CSV file imported successfully! {imported_count} items added.', 'success')
             return redirect(url_for('main.home'))
 
+        except ValueError as e:
+            db.session.rollback()
+            current_app.logger.error(f'Error importing CSV file: {e}')
+            flash(f'An error occurred while importing the file: {e}. Please check the date format and try again.', 'danger')
+            return redirect(request.url)
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(f'Error importing CSV file: {e}')
-            flash('An error occurred while importing the file. Please check the format and try again.', 'danger')
+            flash('An unexpected error occurred while importing the file. Please check the format and try again.', 'danger')
             return redirect(request.url)
     
     return render_template('import_csv.html')
