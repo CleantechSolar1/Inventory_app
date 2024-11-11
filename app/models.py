@@ -5,7 +5,6 @@ from app import db
 from sqlalchemy import ForeignKey
 
 
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -28,7 +27,7 @@ class Inventory(db.Model):
     brand = db.Column(db.String(100), nullable=False)
     model = db.Column(db.String(100), nullable=False)
     fa_code = db.Column(db.String(100), nullable=False)
-    serial_number = db.Column(db.String(100), nullable=False)
+    serial_number = db.Column(db.String(100), nullable=False, unique=True)
     operating_system = db.Column(db.String(100), nullable=False)
     purchase_date = db.Column(db.Date, nullable=False)
     age = db.Column(db.Integer, nullable=False)
@@ -42,15 +41,12 @@ class Inventory(db.Model):
     vendor_location = db.Column(db.String(100))
     updated_by = db.Column(db.String(100), nullable=False)
     
-    
     is_deleted = db.Column(db.Boolean, default=False)
     deleted_at = db.Column(db.DateTime)
     deleted_by = db.Column(db.String(100))
-
     
-
-    # Updated relationship with cascade and setting item_id to null on delete
-    logs = db.relationship('Log', backref='inventory', lazy=True, cascade='all, delete-orphan')
+    # Relationship with the Log model
+    logs = db.relationship('Log', backref='related_inventory', lazy=True)
 
 
 class Log(db.Model):
@@ -63,3 +59,7 @@ class Log(db.Model):
     item_id = db.Column(db.Integer, db.ForeignKey('inventory.id', ondelete='SET NULL'), nullable=True)
     changes = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    serial_number = db.Column(db.String(100), nullable=True)  # Matches Inventory serial_number for tracking
+
+    # Relationship with Inventory for tracking history
+    inventory = db.relationship('Inventory', backref='log_entries', foreign_keys=[item_id])

@@ -7,20 +7,15 @@ from app.models import Inventory, Log, User
 from app.forms import InventoryForm
 from datetime import datetime
 from flask import render_template, redirect, url_for, request, flash
-from app.models import User
 from app.forms import ResetPasswordForm  # Create this form as needed
 from werkzeug.security import generate_password_hash
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash
-from datetime import datetime
 from flask import current_app, flash, redirect, render_template, request, url_for
-from flask_login import current_user, login_required
-from flask import flash, redirect, url_for
-from flask_login import current_user, login_required
-from app import db
-from app.models import Inventory, Log
-from datetime import datetime
+from collections import Counter
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
 
 #from forms import ResetPasswordForm  # Update this import based on your project structure
 #from models import User  # Update this import based on your project structure
@@ -32,9 +27,9 @@ main = Blueprint('main', __name__)
 # Dropdown options
 ASSET_TYPES = ['Laptop', 'Monitors']
 STATUS = ['Available', 'Sold', 'In Use', 'Retired', 'Dead']
-BRANDS = ['Lenovo', 'Dell', 'HP', 'Apple', 'ViewSonic', 'Samsung']
+BRANDS = ['Lenovo', 'Dell', 'HP', 'Apple', 'ViewSonic', 'Samsung', 'Microsoft']
 OPERATING_SYSTEMS = ['Windows', 'Mac', 'Linux']
-DEPARTMENTS = ['IT', 'Procurement', 'Legal', 'Project', 'O&M', 'Finance', 'BD', 'HR', 'Wind', 'Risk', 'Engineering']
+DEPARTMENTS = ['IT', 'Procurement', 'Legal', 'Project', 'O&M', 'Finance', 'BD', 'HR', 'Wind', 'Risk', 'Engineering', 'Corporate']
 OFFICES = ['Mumbai', 'Pune', 'Delhi', 'Hyderabad', 'Chennai', 'Singapore', 'Thailand', 'Malaysia', 'Philippines', 'Vietnam', 'Cambodia', 'Indonesia', 'India']
 COUNTRIES = ['Singapore', 'Thailand', 'Malaysia', 'Philippines', 'Vietnam', 'Cambodia', 'Indonesia', 'India']
 VENDOR_LOCATIONS = ['Mumbai', 'Pune', 'Delhi', 'Hyderabad', 'Chennai', 'Singapore', 'Thailand', 'Malaysia', 'Philippines', 'Vietnam', 'Cambodia', 'Indonesia', 'India']
@@ -42,6 +37,23 @@ VENDOR_LOCATIONS = ['Mumbai', 'Pune', 'Delhi', 'Hyderabad', 'Chennai', 'Singapor
 @main.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
+
+    # Get all items from the inventory
+    items = Inventory.query.all()
+
+    # Calculate brand counts
+    brand_counts = Counter(item.brand for item in items)
+
+    # Sort brand counts in descending order
+    sorted_brand_counts = dict(sorted(brand_counts.items(), key=lambda x: x[1], reverse=True))
+
+    # Calculate status counts
+    status_counts = Counter(item.status for item in items)
+    sorted_status_counts = dict(sorted(status_counts.items(), key=lambda x: x[1], reverse=True))
+
+    # Total count of items
+    total_count = len(items)
+
     # Get aggregated data
     asset_type_counts = db.session.query(Inventory.asset_type, db.func.count(Inventory.id)).group_by(Inventory.asset_type).all()
     department_counts = db.session.query(Inventory.department, db.func.count(Inventory.id)).group_by(Inventory.department).all()
@@ -49,6 +61,7 @@ def home():
     status_counts = db.session.query(Inventory.status, db.func.count(Inventory.id)).group_by(Inventory.status).all()
 
     # Filters
+    search_query = request.args.get('search_query', '')
     asset_type_filter = request.args.get('asset_type')
     department_filter = request.args.get('department')
     country_filter = request.args.get('country')
@@ -60,6 +73,17 @@ def home():
 
     # Apply filters
     items_query = Inventory.query
+
+    # Apply search query if provided
+    if search_query:
+        items_query = items_query.filter(
+            Inventory.asset_tag.contains(search_query) |
+            Inventory.brand.contains(search_query) |
+            Inventory.model.contains(search_query) |
+            Inventory.current_owner.contains(search_query) |
+            Inventory.previous_owner.contains(search_query) |
+            Inventory.serial_number.contains(search_query)
+        )
 
     if asset_type_filter:
         items_query = items_query.filter_by(asset_type=asset_type_filter)
@@ -109,7 +133,12 @@ def home():
                            departments=DEPARTMENTS,
                            offices=OFFICES,
                            countries=COUNTRIES,
-                           vendor_locations=VENDOR_LOCATIONS)
+                           vendor_locations=VENDOR_LOCATIONS,
+                           device_counts=sorted_brand_counts,
+                           sorted_status_counts=sorted_status_counts,
+                           total_count=total_count,
+                           search_query=search_query)
+                           
 
 
 @main.route('/add', methods=['GET', 'POST'])
@@ -127,6 +156,12 @@ def add_item():
 
     if form.validate_on_submit():
         try:
+            # Check if serial number already exists
+            existing_item = Inventory.query.filter_by(serial_number=form.serial_number.data).first()
+            if existing_item:
+                flash(f'An item with serial number {form.serial_number.data} already exists!', 'danger')
+                return redirect(url_for('main.add_item'))
+
             new_item = Inventory(
                 asset_tag=form.asset_tag.data,
                 asset_type=form.asset_type.data,
@@ -148,42 +183,80 @@ def add_item():
                 vendor_location=form.vendor_location.data,
                 updated_by=current_user.username
             )
+            
+            # Add the new item
             db.session.add(new_item)
-            db.session.commit()
+            db.session.flush()  # This gets us the new item's ID before commit
 
-            # Log the addition
+            # Prepare item details for logging
+            item_details = {
+                'asset_tag': new_item.asset_tag,
+                'asset_type': new_item.asset_type,
+                'status': new_item.status,
+                'brand': new_item.brand,
+                'model': new_item.model,
+                'serial_number': new_item.serial_number,
+                'department': new_item.department,
+                'current_owner': new_item.current_owner
+            }
+
+            # Create log entry with serial number
             log = Log(
                 user_id=current_user.id,
                 action="Added item",
                 item_id=new_item.id,
-                changes="Added new item with details: " + str(new_item.__dict__)
+                serial_number=new_item.serial_number,
+                changes=f"User {current_user.username} added new item with details: {str(item_details)}"
             )
+            
             db.session.add(log)
             db.session.commit()
 
-            current_app.logger.info(f'{current_user.username} added new item: {new_item.asset_tag}')
-            flash('Item added successfully!', 'success')
+            # Log success
+            current_app.logger.info(
+                f'User {current_user.username} added new item: {new_item.asset_tag} '
+                f'with serial number: {new_item.serial_number}'
+            )
+            
+            flash(f'Item added successfully! Serial Number: {new_item.serial_number}', 'success')
             return redirect(url_for('main.home'))
-        
+
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f'Error adding item: {str(e)}', exc_info=True)
-            flash('An error occurred while adding the item. Please try again.', 'danger')
+            current_app.logger.error(
+                f'Error adding item with serial number {form.serial_number.data}: {str(e)}',
+                exc_info=True
+            )
+            flash(f'An error occurred while adding the item: {str(e)}. Please try again.', 'danger')
+            
     elif request.method == 'POST':
-        current_app.logger.warning(f'Form validation failed: {form.errors}')
+        current_app.logger.warning(
+            f'Form validation failed for user {current_user.username}: {form.errors}'
+        )
         for field, errors in form.errors.items():
             for error in errors:
                 flash(f"Error in {getattr(form, field).label.text}: {error}", 'danger')
 
-    return render_template('add_item.html', form=form, asset_types=ASSET_TYPES, statuses=STATUS, brands=BRANDS,
-                           operating_systems=OPERATING_SYSTEMS, departments=DEPARTMENTS, offices=OFFICES, countries=COUNTRIES,
-                           vendor_locations=VENDOR_LOCATIONS)
+    return render_template(
+        'add_item.html',
+        form=form,
+        asset_types=ASSET_TYPES,
+        statuses=STATUS,
+        brands=BRANDS,
+        operating_systems=OPERATING_SYSTEMS,
+        departments=DEPARTMENTS,
+        offices=OFFICES,
+        countries=COUNTRIES,
+        vendor_locations=VENDOR_LOCATIONS
+    )
 
 @main.route('/edit/<int:item_id>', methods=['GET', 'POST'])
 @login_required
 def edit_item(item_id):
     item = Inventory.query.get_or_404(item_id)
     form = InventoryForm(obj=item)
+
+    # Set form choices
     form.asset_type.choices = [(at, at) for at in ASSET_TYPES]
     form.status.choices = [(st, st) for st in STATUS]
     form.brand.choices = [(br, br) for br in BRANDS]
@@ -212,18 +285,29 @@ def edit_item(item_id):
             user_id=current_user.id,
             action="Updated item",
             item_id=item.id,
+            serial_number=item.serial_number,
             changes=str(changes)
         )
         db.session.add(log)
         db.session.commit()
         
-        current_app.logger.info(f'{current_user.username} updated item: {item.asset_tag}')
+        current_app.logger.info(f'{current_user.username} updated item: {item.asset_tag} with serial number: {item.serial_number}')
         flash('Item updated successfully!', 'success')
         return redirect(url_for('main.home'))
     
-    return render_template('edit_item.html', form=form, item=item, asset_types=ASSET_TYPES, statuses=STATUS, brands=BRANDS,
-                           operating_systems=OPERATING_SYSTEMS, departments=DEPARTMENTS, offices=OFFICES, countries=COUNTRIES,
-                           vendor_locations=VENDOR_LOCATIONS)
+    return render_template(
+        'edit_item.html',
+        form=form,
+        item=item,
+        asset_types=ASSET_TYPES,
+        statuses=STATUS,
+        brands=BRANDS,
+        operating_systems=OPERATING_SYSTEMS,
+        departments=DEPARTMENTS,
+        offices=OFFICES,
+        countries=COUNTRIES,
+        vendor_locations=VENDOR_LOCATIONS
+    )
 
 @main.route('/view_logs')
 @login_required
@@ -319,50 +403,10 @@ def export_logs_csv():
     )
 
 
-@main.route('/delete/<int:item_id>', methods=['POST'])
-@login_required
-def delete_item(item_id):
-    if current_user.username != 'sameer':
-        flash("You do not have permission to delete items.", "danger")
-        return redirect(url_for('main.home'))
-
-    item = Inventory.query.get_or_404(item_id)
-    
-    try:
-        # Prepare item details for logging
-        item_details = f"Asset Tag: {item.asset_tag}, Type: {item.asset_type}, Brand: {item.brand}, Model: {item.model}"
-
-        # Create the log entry for deletion
-        delete_log = Log(
-            user_id=current_user.id,
-            action="Deleted item",
-            item_id=item_id,
-            changes=f"Item marked as deleted: {item_details}",
-            timestamp=datetime.utcnow()
-        )
-        db.session.add(delete_log)
-        
-        # Mark the item as deleted
-        item.is_deleted = True
-        item.deleted_at = datetime.utcnow()
-        item.deleted_by = current_user.username
-        
-        # Commit the changes
-        db.session.commit()
-        
-        flash('Item marked as deleted successfully!', 'success')
-    except Exception as e:
-        db.session.rollback()
-        current_app.logger.error(f'Error marking item as deleted: {e}')
-        flash('An error occurred while marking the item as deleted. Please try again.', 'danger')
-    
-    return redirect(url_for('main.home'))
-# User Management Routes
-
 @main.route('/add_user', methods=['GET', 'POST'])
 @login_required
 def add_user():
-    if current_user.username != 'sameer':
+    if current_user.username != 'Admin':
         flash('You do not have permission to access this page.', 'danger')
         return redirect(url_for('main.home'))
     
@@ -396,7 +440,7 @@ def add_user():
 @login_required
 def delete_user(user_id):
     user = User.query.get(user_id)
-    if user and user.username != 'sameer':
+    if user and user.username != 'Admin':
         # Delete all logs related to this user
         logs = Log.query.filter_by(user_id=user_id).all()
         for log in logs:
@@ -415,7 +459,7 @@ def delete_user(user_id):
 @main.route('/view_users')
 @login_required
 def view_users():
-    if current_user.username != 'sameer':
+    if current_user.username != 'Admin':
         flash('You do not have permission to access this page.', 'danger')
         return redirect(url_for('main.home'))
 
@@ -522,3 +566,104 @@ def import_csv():
             return redirect(request.url)
     
     return render_template('import_csv.html')
+
+@main.route('/device_count', methods=['GET'])
+@login_required
+def device_count():
+    # Get all items
+    items = Inventory.query.all()
+
+    # Calculate brand & Status counts
+    brand_counts = Counter(item.brand for item in items)
+    status_counts = Counter(item.status for item in items)
+
+    # Sort brand counts in descending order
+    sorted_brand_counts = dict(sorted(brand_counts.items(), key=lambda x: x[1], reverse=True))
+    sorted_status_counts = dict(sorted(status_counts.items(), key=lambda x: x[1], reverse=True))
+
+    # Total count of items
+    total_count = len(items)
+
+    return render_template('device_count.html',
+                           brand_counts=sorted_brand_counts,
+                           status_counts=sorted_status_counts,
+                           total_count=total_count)
+
+
+@main.route('/delete/<int:item_id>', methods=['POST'])
+@login_required
+def delete_item(item_id):
+    # Check if the user has admin permissions
+    if current_user.username != 'Admin':
+        flash("You do not have permission to delete items.", "danger")
+        return redirect(url_for('main.home'))
+
+    # Retrieve the item to be deleted
+    item = Inventory.query.get_or_404(item_id)
+
+    try:
+        # Log deletion details before deleting the item
+        delete_log = Log(
+            user_id=current_user.id,
+            action="Deleted item",
+            item_id=item_id,
+            serial_number=item.serial_number,
+            changes=f"Deleted item with asset tag: {item.asset_tag}, type: {item.asset_type}"
+        )
+        db.session.add(delete_log)
+
+        # Physically delete the item from the database
+        db.session.delete(item)
+
+        # Commit both the log and the deletion
+        db.session.commit()
+
+        flash('Item deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Error deleting item: {e}')
+        flash('An error occurred while deleting the item. Please try again.', 'danger')
+
+    return redirect(url_for('main.home'))
+
+
+@main.route('/delete_all', methods=['POST'])
+@login_required
+def delete_all_items():
+    # Check if the user has admin permissions
+    if current_user.username != 'Admin':
+        flash("You do not have permission to delete all items.", "danger")
+        return redirect(url_for('main.home'))
+
+    try:
+        # Get all items before deletion for logging purposes
+        all_items = Inventory.query.all()
+        item_count = len(all_items)
+
+        # Log deletion for each item individually to preserve serial numbers
+        for item in all_items:
+            delete_log = Log(
+                user_id=current_user.id,
+                action="Bulk deletion",
+                item_id=item.id,
+                serial_number=item.serial_number,
+                changes=f"Item deleted by {current_user.username} during bulk deletion: Asset Tag: {item.asset_tag}, Type: {item.asset_type}, Brand: {item.brand}, Model: {item.model}",
+                timestamp=datetime.utcnow()
+            )
+            db.session.add(delete_log)
+
+        # Physically delete all items from the inventory
+        for item in all_items:
+            db.session.delete(item)
+
+        # Commit the changes
+        db.session.commit()
+
+        current_app.logger.info(f'User {current_user.username} deleted all items ({item_count} items)')
+        flash(f'All items ({item_count}) have been deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(f'Error deleting all items: {e}')
+        flash('An error occurred while deleting all items. Please try again.', 'danger')
+
+    return redirect(url_for('main.home'))

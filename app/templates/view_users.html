@@ -19,10 +19,10 @@
                     <tr>
                         <td>{{ user.id }}</td>
                         <td>{{ user.username }}</td>
-                        <td>{{ 'Super user' if user.username == 'sameer' else 'Normal User' }}</td>
+                        <td>{{ 'Super user' if user.username == 'Admin' else 'Normal User' }}</td>
                         <td>
-                            {% if user.username != 'sameer' %}
-                                {% if current_user.username == 'sameer' %}
+                            {% if user.username != 'Admin' %}
+                                {% if current_user.username == 'Admin' %}
                                     <a href="{{ url_for('main.reset_password', user_id=user.id) }}" class="btn btn-warning btn-sm">Reset Password</a>
                                 {% endif %}
                                 <form method="POST" action="{{ url_for('main.delete_user', user_id=user.id) }}" style="display:inline;">

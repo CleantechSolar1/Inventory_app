@@ -12,7 +12,10 @@
             <label for="password">Password</label>
             <input type="password" class="form-control" id="password" name="password" required>
         </div>
-        <button type="submit" class="btn btn-primary">Add User</button>
+        <div class="form-group d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-primary">Add User</button>
+            <a href="{{ url_for('main.home') }}" class="btn btn-secondary">Back to Home</a>
+        </div>
     </form>
 </div>
 {% endblock %}

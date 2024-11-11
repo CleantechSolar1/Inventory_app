@@ -46,10 +46,10 @@ def create_app():
 
         # Create users if they don't exist
 
-        if not User.query.filter_by(username='sameer').first():
-            sameer = User(username='sameer')
-            sameer.set_password(os.getenv('SAMEER_PASSWORD', 'sameer123'))
-            db.session.add(sameer)
+        if not User.query.filter_by(username='Admin').first():
+            Admin = User(username='Admin')
+            Admin.set_password(os.getenv('ADMIN_PASSWORD', 'Admin@123'))
+            db.session.add(Admin)
 
         db.session.commit()
 

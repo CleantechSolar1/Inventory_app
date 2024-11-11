@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 class="mt-4">Add Inventory Item</h1>
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <h1>Add Inventory Item</h1>
+        <a href="{{ url_for('main.home') }}" class="btn btn-secondary">Back to Home</a>
+    </div>
 
-    <form method="POST" action="{{ url_for('main.add_item') }}">
+    <form method="POST" action="{{ url_for('main.add_item') }}" class="mt-3">
         {{ form.hidden_tag() }}
 
         <div class="form-group">
@@ -38,62 +41,62 @@
 
         <div class="form-group">
             {{ form.serial_number.label(class="form-label") }}
-            {{ form.serial_number(class="form-control") }}
+            {{ form.serial_number(class_="form-control") }}
         </div>
 
         <div class="form-group">
             {{ form.operating_system.label(class="form-label") }}
-            {{ form.operating_system(class="form-control") }}
+            {{ form.operating_system(class_="form-control") }}
         </div>
 
         <div class="form-group">
             {{ form.purchase_date.label(class="form-label") }}
-            {{ form.purchase_date(class="form-control") }}
+            {{ form.purchase_date(class_="form-control") }}
         </div>
 
         <div class="form-group">
             {{ form.age.label(class="form-label") }}
-            {{ form.age(class="form-control") }}
+            {{ form.age(class_="form-control") }}
         </div>
 
         <div class="form-group">
             {{ form.current_owner.label(class="form-label") }}
-            {{ form.current_owner(class="form-control") }}
+            {{ form.current_owner(class_="form-control") }}
         </div>
 
         <div class="form-group">
             {{ form.previous_owner.label(class="form-label") }}
-            {{ form.previous_owner(class="form-control") }}
+            {{ form.previous_owner(class_="form-control") }}
         </div>
 
         <div class="form-group">
             {{ form.warranty_end_date.label(class="form-label") }}
-            {{ form.warranty_end_date(class="form-control") }}
+            {{ form.warranty_end_date(class_="form-control") }}
         </div>
 
         <div class="form-group">
             {{ form.condition_notes.label(class="form-label") }}
-            {{ form.condition_notes(class="form-control") }}
+            {{ form.condition_notes(class_="form-control") }}
         </div>
 
         <div class="form-group">
             {{ form.department.label(class="form-label") }}
-            {{ form.department(class="form-control") }}
+            {{ form.department(class_="form-control") }}
         </div>
 
         <div class="form-group">
             {{ form.office.label(class="form-label") }}
-            {{ form.office(class="form-control") }}
+            {{ form.office(class_="form-control") }}
         </div>
 
         <div class="form-group">
             {{ form.country.label(class="form-label") }}
-            {{ form.country(class="form-control") }}
+            {{ form.country(class_="form-control") }}
         </div>
 
         <div class="form-group">
             {{ form.vendor_location.label(class="form-label") }}
-            {{ form.vendor_location(class="form-control") }}
+            {{ form.vendor_location(class_="form-control") }}
         </div>
 
         <div class="form-group">

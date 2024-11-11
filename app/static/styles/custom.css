@@ -4,12 +4,12 @@
 body {
     background-color: #f8f9fa;
     font-family: Arial, sans-serif;
-    margin: 0; /* Ensure no default margin is applied */
-    padding: 0; /* Ensure no default padding is applied */
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh; /* Center content vertically */
+    min-height: 100vh;
 }
 
 /* Container Styles */
@@ -20,7 +20,77 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     max-width: 700px;
     width: 100%;
-    margin: 0 auto; /* Center the container horizontally */
+    margin: 0 auto;
+}
+
+/* Device Count Page Specific Styles */
+.device-count-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+}
+
+.device-count-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.count-section {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.count-section h3 {
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.count-section ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.count-section li {
+    flex-basis: calc(50% - 10px);
+    margin-bottom: 10px;
+    font-size: 1em;
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+@media (max-width: 600px) {
+    .count-section li {
+        flex-basis: 100%;
+    }
+}
+/* ... (rest of the previous styles remain the same) ... */
+
+/* Center the content */
+.page-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.content-container {
+    width: 100%;
+    max-width: 600px;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Form Styles */
@@ -44,13 +114,18 @@ textarea {
 }
 
 /* Button Styles */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
 .btn-primary {
     background-color: #007bff;
-    border: none;
     color: #fff;
-    border-radius: 4px;
-    padding: 10px;
-    cursor: pointer;
 }
 
 .btn-primary:hover {
@@ -59,11 +134,7 @@ textarea {
 
 .btn-secondary {
     background-color: #6c757d;
-    border: none;
     color: #fff;
-    border-radius: 4px;
-    padding: 10px;
-    cursor: pointer;
 }
 
 .btn-secondary:hover {
@@ -72,11 +143,7 @@ textarea {
 
 .btn-success {
     background-color: #28a745;
-    border: none;
     color: #fff;
-    border-radius: 4px;
-    padding: 10px;
-    cursor: pointer;
 }
 
 .btn-success:hover {
@@ -85,11 +152,7 @@ textarea {
 
 .btn-warning {
     background-color: #ffc107;
-    border: none;
     color: #212529;
-    border-radius: 4px;
-    padding: 10px;
-    cursor: pointer;
 }
 
 .btn-warning:hover {
@@ -103,22 +166,26 @@ textarea {
 
 /* Login Form Specific Styles */
 .login-form .form-control {
-    max-width: 300px; /* Set max width for input fields to reduce size */
-    height: 38px; /* Adjust height as needed */
-    font-size: 0.875rem; /* Adjust font size as needed */
-    margin: 0 auto; /* Center the input fields */
+    max-width: 300px;
+    height: 38px;
+    font-size: 0.875rem;
+    margin: 0 auto;
 }
 
 .login-form .form-group {
-    margin-bottom: 1rem; /* Adjust spacing between form groups */
+    margin-bottom: 1rem;
 }
 
 .login-form .btn {
-    font-size: 0.875rem; /* Adjust button font size */
-    padding: 0.5rem 1rem; /* Adjust button padding */
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
 }
 
 /* Form Specific Styles for Editing Items */
+.edit-item-form {
+    margin-bottom: 20px;
+}
+
 .edit-item-form .form-group {
     margin-bottom: 15px;
 }
@@ -145,28 +212,15 @@ textarea {
     min-height: 80px;
 }
 
-.edit-item-form .form-group input[type="submit"] {
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 10px;
-    cursor: pointer;
-}
-
-.edit-item-form .form-group input[type="submit"]:hover {
-    background-color: #218838;
-}
-
-.edit-item-form .back-link {
-    display: block;
-    text-align: center;
-    margin-top: 20px;
+/* Back link styles */
+.back-link {
+    display: inline-block;
+    margin-top: 15px;
     color: #007bff;
     text-decoration: none;
 }
 
-.edit-item-form .back-link:hover {
+.back-link:hover {
     text-decoration: underline;
 }
 
@@ -175,7 +229,7 @@ textarea {
     width: 250px;
     background-color: #f8f9fa;
     padding: 15px;
-    position: fixed; /* Make it fixed to the left side */
+    position: fixed;
     top: 0;
     bottom: 0;
     left: 0;
@@ -195,15 +249,15 @@ textarea {
 
 /* Adjust main content container to fit alongside the sidebar */
 .container {
-    margin-left: 270px; /* Adjust margin to fit the sidebar */
+    margin-left: 270px;
     padding: 20px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    max-width: calc(100% - 270px); /* Ensure it doesn’t exceed the viewport width */
+    max-width: calc(100% - 270px);
 }
 
-/* Ensure the container’s margin is responsive */
+/* Responsive adjustments */
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
@@ -214,6 +268,10 @@ textarea {
     .container {
         margin-left: 0;
         max-width: 100%;
+    }
+
+    .content-container {
+        padding: 20px;
     }
 }
 
@@ -233,7 +291,7 @@ body.login-page {
 
 /* Apply a semi-transparent background to the login form */
 .login-form {
-    background-color: rgba(255, 255, 255, 0.8); /* White background with transparency */
+    background-color: rgba(255, 255, 255, 0.8);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
