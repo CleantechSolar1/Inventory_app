@@ -15,21 +15,17 @@ from flask import current_app, flash, redirect, render_template, request, url_fo
 from collections import Counter
 import logging
 logging.basicConfig(level=logging.DEBUG)
-
-
-#from forms import ResetPasswordForm  # Update this import based on your project structure
-#from models import User  # Update this import based on your project structure
-
+from app.models import License, LicenseDetails, db
 
 # Define the main Blueprint
 main = Blueprint('main', __name__)
 
 # Dropdown options
-ASSET_TYPES = ['Laptop', 'Monitors']
+ASSET_TYPES = ['Laptop', 'Monitor', 'Accessories', 'Printer']
 STATUS = ['Available', 'Sold', 'In Use', 'Retired', 'Dead']
-BRANDS = ['Lenovo', 'Dell', 'HP', 'Apple', 'ViewSonic', 'Samsung', 'Microsoft']
+BRANDS = ['Lenovo', 'Dell', 'HP', 'Apple', 'ViewSonic', 'Samsung', 'Microsoft', 'LG', 'Fujitsu', 'Acer']
 OPERATING_SYSTEMS = ['Windows', 'Mac', 'Linux']
-DEPARTMENTS = ['IT', 'Procurement', 'Legal', 'Project', 'O&M', 'Finance', 'BD', 'HR', 'Wind', 'Risk', 'Engineering', 'Corporate']
+DEPARTMENTS = ['IT', 'Procurement', 'Legal', 'Project', 'O&M', 'Finance', 'BD', 'HR', 'Wind', 'Risk', 'Engineering', 'Corporate', 'Administration', 'Infrastructure', 'HSSE & SP']
 OFFICES = ['Mumbai', 'Pune', 'Delhi', 'Hyderabad', 'Chennai', 'Singapore', 'Thailand', 'Malaysia', 'Philippines', 'Vietnam', 'Cambodia', 'Indonesia', 'India']
 COUNTRIES = ['Singapore', 'Thailand', 'Malaysia', 'Philippines', 'Vietnam', 'Cambodia', 'Indonesia', 'India']
 VENDOR_LOCATIONS = ['Mumbai', 'Pune', 'Delhi', 'Hyderabad', 'Chennai', 'Singapore', 'Thailand', 'Malaysia', 'Philippines', 'Vietnam', 'Cambodia', 'Indonesia', 'India']
@@ -37,28 +33,8 @@ VENDOR_LOCATIONS = ['Mumbai', 'Pune', 'Delhi', 'Hyderabad', 'Chennai', 'Singapor
 @main.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-
     # Get all items from the inventory
-    items = Inventory.query.all()
-
-    # Calculate brand counts
-    brand_counts = Counter(item.brand for item in items)
-
-    # Sort brand counts in descending order
-    sorted_brand_counts = dict(sorted(brand_counts.items(), key=lambda x: x[1], reverse=True))
-
-    # Calculate status counts
-    status_counts = Counter(item.status for item in items)
-    sorted_status_counts = dict(sorted(status_counts.items(), key=lambda x: x[1], reverse=True))
-
-    # Total count of items
-    total_count = len(items)
-
-    # Get aggregated data
-    asset_type_counts = db.session.query(Inventory.asset_type, db.func.count(Inventory.id)).group_by(Inventory.asset_type).all()
-    department_counts = db.session.query(Inventory.department, db.func.count(Inventory.id)).group_by(Inventory.department).all()
-    country_counts = db.session.query(Inventory.country, db.func.count(Inventory.id)).group_by(Inventory.country).all()
-    status_counts = db.session.query(Inventory.status, db.func.count(Inventory.id)).group_by(Inventory.status).all()
+    items_query = Inventory.query
 
     # Filters
     search_query = request.args.get('search_query', '')
@@ -70,9 +46,6 @@ def home():
     purchase_date_end = request.args.get('purchase_date_end')
     warranty_end_date_start = request.args.get('warranty_end_date_start')
     warranty_end_date_end = request.args.get('warranty_end_date_end')
-
-    # Apply filters
-    items_query = Inventory.query
 
     # Apply search query if provided
     if search_query:
@@ -107,38 +80,56 @@ def home():
     per_page = 20  # Number of items per page
     items = items_query.paginate(page=page, per_page=per_page, error_out=False)
 
+    # Calculate brand counts
+    brand_counts = Counter(item.brand for item in items.items)
+    sorted_brand_counts = dict(sorted(brand_counts.items(), key=lambda x: x[1], reverse=True))
+
+    # Calculate status counts
+    status_counts = Counter(item.status for item in items.items)
+    sorted_status_counts = dict(sorted(status_counts.items(), key=lambda x: x[1], reverse=True))
+
+    # Total count of items
+    total_count = items.total
+
+    # Aggregated data
+    asset_type_counts = db.session.query(Inventory.asset_type, db.func.count(Inventory.id)).group_by(Inventory.asset_type).all()
+    department_counts = db.session.query(Inventory.department, db.func.count(Inventory.id)).group_by(Inventory.department).all()
+    country_counts = db.session.query(Inventory.country, db.func.count(Inventory.id)).group_by(Inventory.country).all()
+    status_counts = db.session.query(Inventory.status, db.func.count(Inventory.id)).group_by(Inventory.status).all()
+
     # Prepare a clean dictionary of query parameters
     query_params = request.args.copy()
     query_params.pop('page', None)  # Remove 'page' if it exists
 
-    return render_template('home.html',
-                           items=items.items,
-                           asset_type_counts=asset_type_counts,
-                           department_counts=department_counts,
-                           country_counts=country_counts,
-                           status_counts=status_counts,
-                           asset_type_filter=asset_type_filter,
-                           department_filter=department_filter,
-                           country_filter=country_filter,
-                           purchase_date_start=purchase_date_start,
-                           purchase_date_end=purchase_date_end,
-                           warranty_end_date_start=warranty_end_date_start,
-                           warranty_end_date_end=warranty_end_date_end,
-                           pagination=items,
-                           query_params=query_params,
-                           asset_types=ASSET_TYPES,
-                           statuses=STATUS,
-                           brands=BRANDS,
-                           operating_systems=OPERATING_SYSTEMS,
-                           departments=DEPARTMENTS,
-                           offices=OFFICES,
-                           countries=COUNTRIES,
-                           vendor_locations=VENDOR_LOCATIONS,
-                           device_counts=sorted_brand_counts,
-                           sorted_status_counts=sorted_status_counts,
-                           total_count=total_count,
-                           search_query=search_query)
-                           
+    return render_template(
+        'home.html',
+        items=items.items,
+        asset_type_counts=asset_type_counts,
+        department_counts=department_counts,
+        country_counts=country_counts,
+        status_counts=status_counts,
+        asset_type_filter=asset_type_filter,
+        department_filter=department_filter,
+        country_filter=country_filter,
+        purchase_date_start=purchase_date_start,
+        purchase_date_end=purchase_date_end,
+        warranty_end_date_start=warranty_end_date_start,
+        warranty_end_date_end=warranty_end_date_end,
+        pagination=items,
+        query_params=query_params,
+        asset_types=ASSET_TYPES,
+        statuses=STATUS,
+        brands=BRANDS,
+        operating_systems=OPERATING_SYSTEMS,
+        departments=DEPARTMENTS,
+        offices=OFFICES,
+        countries=COUNTRIES,
+        vendor_locations=VENDOR_LOCATIONS,
+        device_counts=sorted_brand_counts,
+        sorted_status_counts=sorted_status_counts,
+        total_count=total_count,
+        search_query=search_query
+    )
 
 
 @main.route('/add', methods=['GET', 'POST'])
@@ -181,7 +172,10 @@ def add_item():
                 office=form.office.data,
                 country=form.country.data,
                 vendor_location=form.vendor_location.data,
-                updated_by=current_user.username
+                updated_by=current_user.username if current_user else "System",
+                is_deleted=False,
+                deleted_at=None,
+                deleted_by=None
             )
             
             # Add the new item
@@ -265,21 +259,30 @@ def edit_item(item_id):
     form.office.choices = [(of, of) for of in OFFICES]
     form.country.choices = [(ct, ct) for ct in COUNTRIES]
     form.vendor_location.choices = [(vl, vl) for vl in VENDOR_LOCATIONS]
-    
+
     if form.validate_on_submit():
         old_data = {field.name: getattr(item, field.name) for field in item.__table__.columns}
-        form.populate_obj(item)
-        item.updated_by = current_user.username
         
+        # Allow all users to update regular fields
+        form.populate_obj(item)
+
+        # Allow only the Admin to update restricted fields
+        if current_user.username != 'Admin':
+            item.model = old_data['model']
+            item.fa_code = old_data['fa_code']
+            item.serial_number = old_data['serial_number']
+
+        item.updated_by = current_user.username
+
         # Detect changes
         changes = {}
         for field in item.__table__.columns:
             new_value = getattr(item, field.name)
             if old_data[field.name] != new_value:
                 changes[field.name] = {'old': old_data[field.name], 'new': new_value}
-        
+
         db.session.commit()
-        
+
         # Log the update
         log = Log(
             user_id=current_user.id,
@@ -290,11 +293,11 @@ def edit_item(item_id):
         )
         db.session.add(log)
         db.session.commit()
-        
+
         current_app.logger.info(f'{current_user.username} updated item: {item.asset_tag} with serial number: {item.serial_number}')
         flash('Item updated successfully!', 'success')
         return redirect(url_for('main.home'))
-    
+
     return render_template(
         'edit_item.html',
         form=form,
@@ -308,6 +311,7 @@ def edit_item(item_id):
         countries=COUNTRIES,
         vendor_locations=VENDOR_LOCATIONS
     )
+
 
 @main.route('/view_logs')
 @login_required
@@ -330,6 +334,7 @@ def view_logs():
         current_app.logger.debug(f"Log: ID {log.id}, Action {log.action}, Item ID {log.item_id}, Changes {log.changes}")
 
     return render_template('view_logs.html', logs=logs, current_filter=log_filter)
+
 
 @main.route('/export_csv')
 @login_required
@@ -366,6 +371,7 @@ def export_csv():
         mimetype='text/csv',
         headers={"Content-Disposition": "attachment;filename=inventory_data.csv"}
     )
+
 
 @main.route('/export_logs_csv')
 @login_required
@@ -436,6 +442,7 @@ def add_user():
     
     return render_template('add_user.html')
 
+
 @main.route('/delete_user/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
@@ -466,6 +473,7 @@ def view_users():
     users = User.query.all()
     return render_template('view_users.html', users=users)
 
+
 @main.route('/reset_password/<int:user_id>', methods=['GET', 'POST'])
 def reset_password(user_id):
     user = User.query.get_or_404(user_id)
@@ -481,6 +489,7 @@ def reset_password(user_id):
     else:
         form = ResetPasswordForm()
     return render_template('reset_password.html', form=form, user=user)
+
 
 @main.route('/import_csv', methods=['GET', 'POST'])
 @login_required
@@ -566,20 +575,27 @@ def import_csv():
             return redirect(request.url)
     
     return render_template('import_csv.html')
-
+    
+    
 @main.route('/device_count', methods=['GET'])
 @login_required
 def device_count():
     # Get all items
     items = Inventory.query.all()
 
-    # Calculate brand & Status counts
+    # Calculate brand & status counts
     brand_counts = Counter(item.brand for item in items)
     status_counts = Counter(item.status for item in items)
 
-    # Sort brand counts in descending order
+    # Calculate asset type & country counts
+    asset_type_counts = Counter(item.asset_type for item in items)
+    country_counts = Counter(item.country for item in items)
+
+    # Sort counts in descending order
     sorted_brand_counts = dict(sorted(brand_counts.items(), key=lambda x: x[1], reverse=True))
     sorted_status_counts = dict(sorted(status_counts.items(), key=lambda x: x[1], reverse=True))
+    sorted_asset_type_counts = dict(sorted(asset_type_counts.items(), key=lambda x: x[1], reverse=True))
+    sorted_country_counts = dict(sorted(country_counts.items(), key=lambda x: x[1], reverse=True))
 
     # Total count of items
     total_count = len(items)
@@ -587,6 +603,8 @@ def device_count():
     return render_template('device_count.html',
                            brand_counts=sorted_brand_counts,
                            status_counts=sorted_status_counts,
+                           asset_type_counts=sorted_asset_type_counts,
+                           country_counts=sorted_country_counts,
                            total_count=total_count)
 
 
@@ -667,3 +685,160 @@ def delete_all_items():
         flash('An error occurred while deleting all items. Please try again.', 'danger')
 
     return redirect(url_for('main.home'))
+
+from flask import render_template, request, redirect, url_for, flash
+from app.models import License, LicenseDetails, db
+
+
+@main.route('/licenses', methods=['GET'])
+def licenses():
+    try:
+        licenses = License.query.all()
+        return render_template('licenses.html', licenses=licenses)
+    except Exception as e:
+        current_app.logger.error(f"Error fetching licenses: {e}")
+        flash('Error fetching licenses. Please try again later.', 'danger')
+        return render_template('licenses.html', licenses=License.query.all())
+
+
+@main.route('/license/<int:license_id>', methods=['GET', 'POST'])
+def license_details(license_id):
+    try:
+        # Get the license information
+        license = License.query.get(license_id)
+        if not license:
+            flash("License not found.", "danger")
+            return redirect(url_for('main.licenses'))
+
+        # Fetch all existing details associated with this license
+        license_details = LicenseDetails.query.filter_by(license_id=license_id).all()
+
+        # Calculate how many details are still needed
+        required_details = license.quantity - len(license_details)
+
+        if request.method == 'POST':
+            # Add new license detail
+            current_owner = request.form['current_owner']
+            purchase_date = request.form['purchase_date']
+            expiry_date = request.form['expiry_date']
+            remarks = request.form.get('remarks', '')
+
+            new_detail = LicenseDetails(
+                license_id=license_id,
+                current_owner=current_owner,
+                purchase_date=purchase_date,
+                expiry_date=expiry_date,
+                remarks=remarks
+            )
+            db.session.add(new_detail)
+            db.session.commit()
+
+            flash("License detail added successfully.", "success")
+            return redirect(url_for('main.license_details', license_id=license_id))
+
+        # Calculate the missing details count
+        missing_details_count = max(0, license.quantity - len(license_details))
+
+        return render_template(
+            'license_details.html',
+            license=license,
+            details=license_details,
+            required_details=required_details,
+            missing_details_count=missing_details_count
+        )
+
+    except Exception as e:
+        current_app.logger.error(f"Error fetching license details: {e}")
+        flash("Error fetching license details. Please try again later.", "danger")
+        return redirect(url_for('main.licenses'))
+
+
+@main.route('/add_license', methods=['GET', 'POST'])
+def add_license():
+    if request.method == 'POST':
+        try:
+            name = request.form.get('name')
+            license_type = request.form.get('type')
+            quantity = int(request.form.get('quantity', 0))
+
+            if not name or not license_type or quantity <= 0:
+                flash("All fields are required and quantity must be positive.", "warning")
+                return redirect(url_for('main.add_license'))
+
+            new_license = License(name=name, type=license_type, quantity=quantity)
+            db.session.add(new_license)
+            db.session.commit()
+            flash("License added successfully!", "success")
+            return redirect(url_for('main.licenses'))
+        except Exception as e:
+            current_app.logger.error(f"Error adding license: {e}")
+            flash("An error occurred while adding the license.", "danger")
+            return redirect(url_for('main.add_license'))
+    return render_template('add_license.html')
+
+
+@main.route('/edit_license/<int:license_id>', methods=['GET', 'POST'])
+def edit_license(license_id):
+    license = License.query.get_or_404(license_id)
+    if request.method == 'POST':
+        license.name = request.form.get('name')
+        license.type = request.form.get('type')
+        license.quantity = int(request.form.get('quantity'))
+        db.session.commit()
+        flash('License updated successfully!', 'success')
+        return redirect(url_for('main.licenses'))
+    return render_template('edit_license.html', license=license)
+
+
+@main.route('/delete_license/<int:license_id>', methods=['POST'])
+def delete_license(license_id):
+    license = License.query.get_or_404(license_id)
+    db.session.delete(license)
+    db.session.commit()
+    flash('License deleted successfully!', 'success')
+    return redirect(url_for('main.licenses'))
+
+
+@main.route('/add_license_details/<int:license_id>', methods=['GET', 'POST'])
+def add_license_details(license_id):
+    license = License.query.get_or_404(license_id)
+    if request.method == 'POST':
+        current_owner = request.form.get('current_owner')
+        purchase_date = request.form.get('purchase_date')
+        expiry_date = request.form.get('expiry_date')
+        remarks = request.form.get('remarks')
+        new_detail = LicenseDetails(
+            license_id=license_id,
+            current_owner=current_owner,
+            purchase_date=purchase_date,
+            expiry_date=expiry_date,
+            remarks=remarks
+        )
+        db.session.add(new_detail)
+        db.session.commit()
+        flash('License details added successfully!')
+        return redirect(url_for('license_details', license_id=license_id))
+    return render_template('add_license_details.html', license=license)
+
+
+@main.route('/edit_license_detail/<int:detail_id>', methods=['GET', 'POST'])
+def edit_license_detail(detail_id):
+    detail = LicenseDetails.query.get_or_404(detail_id)
+    if request.method == 'POST':
+        detail.current_owner = request.form.get('current_owner')
+        detail.purchase_date = request.form.get('purchase_date')
+        detail.expiry_date = request.form.get('expiry_date')
+        detail.remarks = request.form.get('remarks')
+        db.session.commit()
+        flash('License detail updated successfully!', 'success')
+        return redirect(url_for('main.license_details', license_id=detail.license_id))
+    return render_template('edit_license_detail.html', detail=detail)
+
+
+@main.route('/delete_license_detail/<int:detail_id>', methods=['POST'])
+def delete_license_detail(detail_id):
+    detail = LicenseDetails.query.get_or_404(detail_id)
+    db.session.delete(detail)
+    db.session.commit()
+    flash('License detail deleted successfully!', 'success')
+    return redirect(url_for('main.license_details', license_id=detail.license_id))

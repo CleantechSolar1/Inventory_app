@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db
 from sqlalchemy import ForeignKey
 
-
+# User Model
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -16,7 +16,7 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-
+# Inventory Model
 class Inventory(db.Model):
     __tablename__ = 'inventory'
 
@@ -39,16 +39,20 @@ class Inventory(db.Model):
     office = db.Column(db.String(100))
     country = db.Column(db.String(100))
     vendor_location = db.Column(db.String(100))
-    updated_by = db.Column(db.String(100), nullable=False)
-    
+    updated_by = db.Column(db.String(100), nullable=True)
+    is_deleted = db.Column(db.Boolean, default=False)  # Must exist
+    deleted_at = db.Column(db.DateTime, nullable=True)
+    deleted_by = db.Column(db.String(50), nullable=True)
+
+    # Deletion tracking
     is_deleted = db.Column(db.Boolean, default=False)
     deleted_at = db.Column(db.DateTime)
     deleted_by = db.Column(db.String(100))
-    
-    # Relationship with the Log model
-    logs = db.relationship('Log', backref='related_inventory', lazy=True)
 
+    # Relationship with Log model
+    logs = db.relationship('Log', backref='related_inventory', lazy=True, overlaps="log_entries,inventory")
 
+# Log Model
 class Log(db.Model):
     __tablename__ = 'log'
 
@@ -62,4 +66,24 @@ class Log(db.Model):
     serial_number = db.Column(db.String(100), nullable=True)  # Matches Inventory serial_number for tracking
 
     # Relationship with Inventory for tracking history
-    inventory = db.relationship('Inventory', backref='log_entries', foreign_keys=[item_id])
+    inventory = db.relationship('Inventory', backref='log_entries', foreign_keys=[item_id], overlaps="logs,related_inventory")
+
+# License Model
+class License(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    type = db.Column(db.String(50), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False)
+
+    # Relationship with LicenseDetails
+    details = db.relationship('LicenseDetails', backref='license', cascade='all, delete-orphan')
+
+# LicenseDetails Model
+class LicenseDetails(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    license_id = db.Column(db.Integer, db.ForeignKey('license.id'), nullable=False)
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    current_owner = db.Column(db.String(100), nullable=False)
+    purchase_date = db.Column(db.Date, nullable=False)
+    expiry_date = db.Column(db.Date, nullable=False)
+    remarks = db.Column(db.String(255), nullable=True)
