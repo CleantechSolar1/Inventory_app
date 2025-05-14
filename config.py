@@ -11,7 +11,7 @@ class Config:
     # PostgreSQL connection settings from environment variables
     POSTGRES_USER = os.getenv('POSTGRES_USER', 'inventory_oa06_user')
     POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD', 'HiafztY7PGlYOGqqUdKTDtqaAw9IQY2e')
-    POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'dpg-cvhe9g52ng1s73bf72ng-a')
+    POSTGRES_HOST = os.getenv('POSTGRES_HOST', 'dpg-cvhe9g52ng1s73bf72ng-a.oregon-postgres.render.com')
     POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')  # Default PostgreSQL port
     POSTGRES_DB = os.getenv('POSTGRES_DB', 'inventory_oa06')
 
