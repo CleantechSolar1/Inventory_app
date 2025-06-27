@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+
+# Environment variables
+.env
+
+# SQLite DBs (optional — if not pushing local dbs)
+instance/*.db
+
+# VSCode settings
+.vscode/
+
+# Migrations cache
+migrations/__pycache__/
+migrations/versions/__pycache__/
+
+# images
+*.png
+*.webp
+*.jpeg

@@ -1,0 +1,81 @@
+2025-06-20 15:14:52,374 - app - ERROR - Exception on / [GET]
+Traceback (most recent call last):
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: inventory.is_deleted
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\flask\app.py", line 2529, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\flask\app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\flask\app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\flask\app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\app\routes\main.py", line 81, in home
+    items = items_query.paginate(page=page, per_page=per_page, error_out=False)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\flask_sqlalchemy\query.py", line 98, in paginate
+    return QueryPagination(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\flask_sqlalchemy\pagination.py", line 72, in __init__
+    items = self._query_items()
+            ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\flask_sqlalchemy\pagination.py", line 358, in _query_items
+    out = query.limit(self.per_page).offset(self._query_offset).all()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2673, in all
+    return self._iter().all()  # type: ignore
+           ^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2827, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2362, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2247, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\orm\context.py", line 293, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1418, in execute
+    return meth(
+           ^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1640, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "C:\Users\MaazHussain\Desktop\Maaz\Inventory_app_sandbox\.venv\Lib\site-packages\sqlalchemy\engine\default.py", line 941, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: inventory.is_deleted
+[SQL: SELECT inventory.id AS inventory_id, inventory.asset_tag AS inventory_asset_tag, inventory.asset_type AS inventory_asset_type, inventory.status AS inventory_status, inventory.brand AS inventory_brand, inventory.model AS inventory_model, inventory.fa_code AS inventory_fa_code, inventory.serial_number AS inventory_serial_number, inventory.operating_system AS inventory_operating_system, inventory.purchase_date AS inventory_purchase_date, inventory.age AS inventory_age, inventory.current_owner AS inventory_current_owner, inventory.previous_owner AS inventory_previous_owner, inventory.warranty_end_date AS inventory_warranty_end_date, inventory.condition_notes AS inventory_condition_notes, inventory.department AS inventory_department, inventory.office AS inventory_office, inventory.country AS inventory_country, inventory.vendor_location AS inventory_vendor_location, inventory.updated_by AS inventory_updated_by, inventory.is_deleted AS inventory_is_deleted, inventory.deleted_at AS inventory_deleted_at, inventory.deleted_by AS inventory_deleted_by 
+FROM inventory
+ LIMIT ? OFFSET ?]
+[parameters: (20, 0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-06-24 16:34:58,117 - app - INFO - Fetched 0 logs
+2025-06-24 16:42:54,670 - app - INFO - Fetched 0 logs

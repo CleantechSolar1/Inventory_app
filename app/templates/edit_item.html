@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Item</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input, select {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button, .button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        button:hover, .button:hover {
+            background-color: #2980b9;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .home-button {
+            background-color: #2ecc71;
+        }
+        .home-button:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <h1>Edit Item</h1>
+    <form method="POST" action="{{ url_for('main.edit_item', item_id=item.id) }}">
+        {{ form.hidden_tag() }}
+
+        <label for="asset_tag">Asset Tag</label>
+        {{ form.asset_tag(class_="form-control") }}
+
+        <label for="asset_type">Asset Type</label>
+        <select name="asset_type" class="form-control">
+            {% for value, label in form.asset_type.choices %}
+                <option value="{{ value }}" {% if form.asset_type.data == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="status">Status</label>
+        {{ form.status(class_="form-control") }}
+
+        <label for="brand">Brand</label>
+        {{ form.brand(class_="form-control") }}
+
+        <label for="operating_system">Operating System</label>
+        {{ form.operating_system(class_="form-control") }}
+
+        <label for="department">Department</label>
+        {{ form.department(class_="form-control") }}
+
+        <label for="purchase_date">Purchase Date</label>
+        {{ form.purchase_date(class_="form-control") }}
+
+        <label for="age">Age</label>
+        {{ form.age(class_="form-control") }}
+
+        <label for="current_owner">Current Owner</label>
+        {{ form.current_owner(class_="form-control") }}
+
+        <label for="previous_owner">Previous Owner</label>
+        {{ form.previous_owner(class_="form-control") }}
+
+        <label for="warranty_end_date">Warranty End Date</label>
+        {{ form.warranty_end_date(class_="form-control") }}
+
+        <label for="condition_notes">Condition Notes</label>
+        {{ form.condition_notes(class_="form-control", style="height: 50px; width: 100%;") }}
+
+        <label for="office">Office</label>
+        {{ form.office(class_="form-control") }}
+
+        <label for="country">Country</label>
+        {{ form.country(class_="form-control") }}
+
+        <label for="vendor_location">Vendor Location</label>
+        {{ form.vendor_location(class_="form-control") }}
+
+        {% if current_user.username == 'Admin' %}
+            <label for="model">Model</label>
+            {{ form.model(class_="form-control") }}
+
+            <label for="fa_code">FA Code</label>
+            {{ form.fa_code(class_="form-control") }}
+
+            <label for="serial_number">Serial Number</label>
+            {{ form.serial_number(class_="form-control") }}
+        {% endif %}
+
+        <div class="button-container">
+            <button type="submit">Save Changes</button>
+            <a href="{{ url_for('main.home') }}" class="home-button button">Back to Home</a>
+        </div>
+    </form>
+</body>
+</html>
