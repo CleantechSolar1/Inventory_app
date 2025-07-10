@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.models import Inventory, Log, User
 from app.forms import InventoryForm
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import render_template, redirect, url_for, request, flash
 from app.forms import ResetPasswordForm  # Create this form as needed
 from werkzeug.security import generate_password_hash
@@ -131,6 +131,18 @@ def home():
         search_query=search_query
     )
 
+@main.route('/notifications')
+@login_required
+def notifications():
+    today = datetime.today().date()
+    warning_date = today + timedelta(days=30)
+
+    expiring_assets = Inventory.query.filter(
+        Inventory.warranty_end_date <= warning_date,
+        Inventory.warranty_end_date >= today
+    ).all()
+
+    return render_template('notifications.html', expiring_assets=expiring_assets)
 
 @main.route('/add', methods=['GET', 'POST'])
 @login_required
@@ -842,3 +854,18 @@ def delete_license_detail(detail_id):
     db.session.commit()
     flash('License detail deleted successfully!', 'success')
     return redirect(url_for('main.license_details', license_id=detail.license_id))
+
+@main.context_processor
+def inject_notification_count():
+    from datetime import datetime, timedelta
+    from app.models import Inventory
+
+    today = datetime.today().date()
+    warning_date = today + timedelta(days=30) # This is the "notify before" window
+
+    expiring_assets_count = Inventory.query.filter(
+        Inventory.warranty_end_date <= warning_date,
+        Inventory.warranty_end_date >= today
+    ).count()
+
+    return dict(expiring_assets_count=expiring_assets_count)
