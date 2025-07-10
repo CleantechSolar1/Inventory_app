@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-4">
+    <h2>Upcoming Warranty Expirations</h2>
+    {% if expiring_assets %}
+        <ul class="list-group mt-3">
+            {% for asset in expiring_assets %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                    <strong>{{ asset.serial_number }}</strong> — {{ asset.model }}
+                    <br>
+                    Warranty ends on: <strong>{{ asset.warranty_end_date.strftime('%Y-%m-%d') }}</strong>
+                </span>
+                <a href="{{ url_for('main.edit_item', item_id=asset.id) }}" class="btn btn-sm btn-warning">Edit</a>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="mt-3 text-muted">No assets with upcoming warranty expirations.</p>
+    {% endif %}
+</div>
+{% endblock %}
