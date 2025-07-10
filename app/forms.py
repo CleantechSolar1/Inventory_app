@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateField, TextAreaField, IntegerField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, DateField, TextAreaField, IntegerField, SelectField, HiddenField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 from app.models import User
 
@@ -9,7 +9,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class InventoryForm(FlaskForm):
-    asset_tag = StringField('Asset Tag', validators=[DataRequired(), Length(max=50)])
+    asset_tag = HiddenField()
     asset_type = SelectField('Asset Type', choices=[], validators=[DataRequired()])
     status = SelectField('Status', choices=[], validators=[DataRequired()])
     brand = SelectField('Brand', choices=[], validators=[DataRequired()])
