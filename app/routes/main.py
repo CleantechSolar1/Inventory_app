@@ -30,6 +30,11 @@ OFFICES = ['Mumbai', 'Pune', 'Delhi', 'Hyderabad', 'Chennai', 'Singapore', 'Thai
 COUNTRIES = ['Singapore', 'Thailand', 'Malaysia', 'Philippines', 'Vietnam', 'Cambodia', 'Indonesia', 'India']
 VENDOR_LOCATIONS = ['Mumbai', 'Pune', 'Delhi', 'Hyderabad', 'Chennai', 'Singapore', 'Thailand', 'Malaysia', 'Philippines', 'Vietnam', 'Cambodia', 'Indonesia', 'India']
 
+# Prefix Dictionaries
+COUNTRY_CODES = {'Singapore': 'SG', 'India': 'IN', 'Thailand': 'TH', 'Malaysia':'MY', 'Philippines': 'PH', 'Vietnam': 'VN', 'Cambodia': 'KH', 'Indonesia': 'ID'}
+ASSET_TYPE_CODES = {'Laptop': 'LT', 'Monitor': 'MN', 'Accessories': 'AC', 'Printer': 'PR'}
+BRAND_CODES = {'Lenovo': 'LNV', 'Dell': 'DLL', 'HP': 'HPP', 'Apple': 'APL', 'ViewSonic': 'VWS', 'Samsung': 'SAM', 'Microsoft': 'MIS', 'LG': 'LGG', 'Fujitsu': 'FUJ', 'Acer': 'ACR'}
+
 @main.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
@@ -164,9 +169,18 @@ def add_item():
             if existing_item:
                 flash(f'An item with serial number {form.serial_number.data} already exists!', 'danger')
                 return redirect(url_for('main.add_item'))
+            
+            # === Auto-generate asset_tag ===
+            country_code = COUNTRY_CODES.get(form.country.data, 'XX')
+            asset_type_code = ASSET_TYPE_CODES.get(form.asset_type.data, 'XX')
+            brand_code = BRAND_CODES.get(form.brand.data, 'XXX')
+
+            asset_type_count = Inventory.query.filter_by(asset_type=form.asset_type.data).count()
+            serial_suffix = f"{asset_type_count + 1:04d}"
+            generated_asset_tag = f"{country_code}{asset_type_code}{brand_code}{serial_suffix}"
 
             new_item = Inventory(
-                asset_tag=form.asset_tag.data,
+                asset_tag=generated_asset_tag,
                 asset_type=form.asset_type.data,
                 status=form.status.data,
                 brand=form.brand.data,
@@ -220,7 +234,7 @@ def add_item():
 
             # Log success
             current_app.logger.info(
-                f'User {current_user.username} added new item: {new_item.asset_tag} '
+                f'User {current_user.username} added new item: {generated_asset_tag} '
                 f'with serial number: {new_item.serial_number}'
             )
             
