@@ -74,8 +74,8 @@
     <form method="POST" action="{{ url_for('main.edit_item', item_id=item.id) }}">
         {{ form.hidden_tag() }}
 
-        <label for="asset_tag">Asset Tag</label>
-        {{ form.asset_tag(class_="form-control") }}
+        <!-- <label for="asset_tag">Asset Tag</label>
+        {{ form.asset_tag(class_="form-control") }} -->
 
         <label for="asset_type">Asset Type</label>
         <select name="asset_type" class="form-control">
