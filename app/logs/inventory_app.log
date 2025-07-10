@@ -79,3 +79,7 @@ FROM inventory
 (Background on this error at: https://sqlalche.me/e/20/e3q8)
 2025-06-24 16:34:58,117 - app - INFO - Fetched 0 logs
 2025-06-24 16:42:54,670 - app - INFO - Fetched 0 logs
+2025-07-08 16:12:39,063 - app - INFO - User Admin added new item: INLTLNV0005 with serial number: R914XRZB
+2025-07-08 16:14:53,447 - app - INFO - Admin updated item: INLTLNV0005 with serial number: R914XRZB
+2025-07-08 16:29:29,918 - app - INFO - User Maaz added new item: SGLTLNV0376 with serial number: PF2PCWXC
+2025-07-08 16:31:45,418 - app - INFO - User Maaz added new item: THLTDLL0204 with serial number: 5VL8MW2
