@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateField, TextAreaField, IntegerField, SelectField, HiddenField
+from wtforms import StringField, PasswordField, SubmitField, DateField, TextAreaField, IntegerField, SelectField, HiddenField, DecimalField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
 from app.models import User
 
@@ -18,6 +18,7 @@ class InventoryForm(FlaskForm):
     serial_number = StringField('Serial Number', validators=[DataRequired(), Length(max=50)])
     operating_system = SelectField('Operating System', choices=[], validators=[DataRequired()])
     purchase_date = DateField('Purchase Date', validators=[DataRequired()])
+    purchase_amount = DecimalField('Purchase Amount', validators=[DataRequired()], places=2)
     age = IntegerField('Age', validators=[DataRequired()])
     current_owner = StringField('Current Owner', validators=[DataRequired(), Length(max=50)])
     previous_owner = StringField('Previous Owner', validators=[DataRequired(), Length(max=50)])
