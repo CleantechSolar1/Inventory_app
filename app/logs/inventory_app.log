@@ -93,3 +93,8 @@ FROM inventory
 2025-07-10 15:15:32,319 - app - INFO - Maaz updated item: INLTLNV0001 with serial number: R914XRZB
 2025-07-10 15:17:07,667 - app - INFO - User Maaz added new item: PHPRAPL0001 with serial number: PC16DTXX
 2025-07-10 15:21:02,069 - app - INFO - User Admin added new item: VNLTACR0004 with serial number: PC1R79DE
+2025-07-17 16:47:18,676 - app - INFO - User Maaz added new item: SGLTDLL0005 with serial number: 89H24P2
+2025-07-17 17:17:43,191 - app - INFO - Maaz updated item: SGLTDLL0005 with serial number: 89H24P2
+2025-07-17 17:39:34,060 - app - INFO - User Maaz added new item: INLTLNV0001 with serial number: PC16DTXX
+2025-07-17 17:40:15,918 - app - INFO - Maaz updated item: INLTLNV0001 with serial number: PC16DTXX
+2025-07-17 17:42:07,985 - app - INFO - User Maaz added new item: VNLTLNV0002 with serial number: R914XRZB
