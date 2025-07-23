@@ -167,7 +167,9 @@
                     <th>Serial Number</th>
                     <th>Operating System</th>
                     <th>Purchase Date</th>
+                    <th>Purchase Amount (In USD)</th>
                     <th>Age</th>
+                    <th>Depreciated Value (In USD)</th>
                     <th>Current Owner</th>
                     <th>Previous Owner</th>
                     <th>Warranty End Date</th>
@@ -192,7 +194,9 @@
                     <td>{{ item.serial_number }}</td>
                     <td>{{ item.operating_system }}</td>
                     <td>{{ item.purchase_date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ item.purchase_amount }}</td>
                     <td>{{ item.age }}</td>
+                    <td>{{ item.depreciated_value }}</td>
                     <td>{{ item.current_owner }}</td>
                     <td>{{ item.previous_owner }}</td>
                     <td>{{ item.warranty_end_date.strftime('%Y-%m-%d') if item.warranty_end_date else 'N/A' }}</td>
