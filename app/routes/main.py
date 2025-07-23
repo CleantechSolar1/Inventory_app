@@ -179,6 +179,17 @@ def add_item():
             serial_suffix = f"{asset_type_count + 1:04d}"
             generated_asset_tag = f"{country_code}{asset_type_code}{brand_code}{serial_suffix}"
 
+            # === Depreciation calculation ===
+            depreciated_value = None
+            if form.purchase_amount.data and form.purchase_date.data:
+                months_elapsed = (
+                    (datetime.utcnow().year - form.purchase_date.data.year) * 12 +
+                    (datetime.utcnow().month - form.purchase_date.data.month)
+                )
+                months_elapsed = max(0, months_elapsed)
+                depreciation_per_month = float(form.purchase_amount.data) / 60
+                depreciated_value = max(0, float(form.purchase_amount.data) - depreciation_per_month * months_elapsed)
+
             new_item = Inventory(
                 asset_tag=generated_asset_tag,
                 asset_type=form.asset_type.data,
@@ -189,7 +200,9 @@ def add_item():
                 serial_number=form.serial_number.data,
                 operating_system=form.operating_system.data,
                 purchase_date=form.purchase_date.data,
+                purchase_amount=form.purchase_amount.data,
                 age=form.age.data,
+                depreciated_value=depreciated_value,
                 current_owner=form.current_owner.data,
                 previous_owner=form.previous_owner.data,
                 warranty_end_date=form.warranty_end_date.data,
