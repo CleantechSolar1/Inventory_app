@@ -98,3 +98,20 @@ FROM inventory
 2025-07-17 17:39:34,060 - app - INFO - User Maaz added new item: INLTLNV0001 with serial number: PC16DTXX
 2025-07-17 17:40:15,918 - app - INFO - Maaz updated item: INLTLNV0001 with serial number: PC16DTXX
 2025-07-17 17:42:07,985 - app - INFO - User Maaz added new item: VNLTLNV0002 with serial number: R914XRZB
+2025-07-23 17:27:17,007 - app - INFO - Fetched 26 logs
+2025-07-23 17:40:39,784 - app - INFO - Fetched 26 logs
+2025-07-23 17:42:08,886 - app - INFO - Fetched 26 logs
+2025-07-23 17:42:14,371 - app - INFO - Fetched 0 logs
+2025-07-23 17:42:24,309 - app - INFO - Fetched 26 logs
+2025-07-24 09:55:45,770 - app - INFO - Fetched 26 logs
+2025-07-24 09:58:47,521 - app - INFO - Fetched 26 logs
+2025-07-24 10:01:31,201 - app - INFO - Fetched 26 logs
+2025-07-24 10:02:23,453 - app - INFO - Fetched 26 logs
+2025-07-24 10:02:53,983 - app - INFO - Fetched 26 logs
+2025-07-24 10:20:03,512 - app - INFO - Fetched 26 logs
+2025-07-24 10:20:34,989 - app - INFO - Fetched 21 logs
+2025-07-24 10:20:51,935 - app - INFO - Fetched 26 logs
+2025-07-24 10:21:07,389 - app - INFO - Fetched 5 logs
+2025-07-24 10:23:46,535 - app - INFO - Fetched 5 logs
+2025-07-24 10:23:49,382 - app - INFO - Fetched 26 logs
+2025-07-24 10:23:56,346 - app - INFO - Fetched 5 logs
