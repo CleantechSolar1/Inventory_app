@@ -16,6 +16,7 @@ from collections import Counter
 import logging
 logging.basicConfig(level=logging.DEBUG)
 from app.models import License, LicenseDetails, db
+from datetime import datetime
 
 # Define the main Blueprint
 main = Blueprint('main', __name__)
@@ -357,6 +358,8 @@ def edit_item(item_id):
 def view_logs():
     # Get the filter parameter from the URL
     log_filter = request.args.get('filter', 'all')
+    start_date_str = request.args.get('start_date')
+    end_date_str = request.args.get('end_date')
 
     # Base query
     query = Log.query
@@ -365,6 +368,17 @@ def view_logs():
     if log_filter == 'csv_import':
         query = query.filter(Log.action == 'CSV Import')
 
+    # Filter by date range if provided
+    if start_date_str and end_date_str:
+        try:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+            # Make end_date inclusive (end of day)
+            end_date = end_date.replace(hour=23, minute=59, second=59)
+            query = query.filter(Log.timestamp.between(start_date, end_date))
+        except ValueError:
+            flash('Invalid date format. Please use YYYY-MM-DD.', 'danger')
+
     # Order logs by timestamp descending
     logs = query.order_by(Log.timestamp.desc()).all()
 
@@ -372,7 +386,7 @@ def view_logs():
     for log in logs:
         current_app.logger.debug(f"Log: ID {log.id}, Action {log.action}, Item ID {log.item_id}, Changes {log.changes}")
 
-    return render_template('view_logs.html', logs=logs, current_filter=log_filter)
+    return render_template('view_logs.html', logs=logs, current_filter=log_filter, start_date=start_date_str, end_date=end_date_str)
 
 
 @main.route('/export_csv')
@@ -415,8 +429,26 @@ def export_csv():
 @main.route('/export_logs_csv')
 @login_required
 def export_logs_csv():
-    # Fetch logs from the database
-    logs = Log.query.all()
+    log_filter = request.args.get('filter', 'all')
+    start_date_str = request.args.get('start_date')
+    end_date_str = request.args.get('end_date')
+
+    query = Log.query
+
+    # Apply action filter
+    if log_filter == 'csv_import':
+        query = query.filter(Log.action == 'CSV Import')
+
+    if start_date_str and end_date_str:
+        try:
+            start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+            end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+            end_date = end_date.replace(hour=23, minute=59, second=59)
+            query = query.filter(Log.timestamp.between(start_date, end_date))
+        except ValueError:
+            flash('Invalid date format for export.', 'danger')
+
+    logs = query.all()
     
     # Create a CSV in memory
     output = io.StringIO()
